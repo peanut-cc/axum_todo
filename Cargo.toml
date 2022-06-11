@@ -3,6 +3,18 @@ name = "axum_todo"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "axum_todo"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+axum="0.5"
+tokio = { version="1", features = ["full"] }
+serde = { version="1", features = ["derive"] }
+dotenv = "0.15"
+config = "0.13"
