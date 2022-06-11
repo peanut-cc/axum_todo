@@ -1,5 +1,6 @@
 
-use axum_todo::configuration::get_configuration;
+use axum_todo::{configuration::get_configuration};
+
 
 
 #[tokio::main]

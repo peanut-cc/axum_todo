@@ -1,7 +1,10 @@
+use axum::Json;
 
+use crate::Response;
+use crate::Result;
 
-pub async fn usage() -> &'static str {
-    r#"
+pub async fn usage<'a>() -> Result<Json<Response<Vec<&'a str>>>> {
+    let data = r#"
         ### USAGE ###
         - GET /todo -- get all todo list
         - POST /todo -- create a todo list
@@ -12,5 +15,13 @@ pub async fn usage() -> &'static str {
         - GET /todo/:list_id/items/:item_id -- get detail for a todo item
         - PUT /todo/:list_id/items/:item_id -- edit a todo item(set the item to checked)
         - DELETE /todo/:list_id/items/:item_id -- delete a todo item
-    "#
+    "#;
+    let data = data
+        .split('\n')
+        .into_iter()
+        .map(|line| line.trim())
+        .filter(|line| !line.is_empty())
+        .collect();
+    let data = Response::ok(data);
+    Ok(Json(data))
 }
