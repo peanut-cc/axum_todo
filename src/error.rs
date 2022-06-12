@@ -1,16 +1,19 @@
+use std::fmt::Display;
+
 use axum::{
     response::IntoResponse, Json,
 };
 
 use crate::Response;
 
-
+#[derive(Debug)]
 pub enum AppErrorType {
     Ok,
     DbError,
     NotFound,
 }
 
+#[derive(Debug)]
 pub struct AppError {
     pub message: Option<String>,
     pub cause: Option<String>,
@@ -73,5 +76,12 @@ impl From<deadpool_postgres::PoolError> for AppError {
 impl From<tokio_postgres::Error> for AppError {
     fn from(err: tokio_postgres::Error) -> Self {
         Self::db_error(err)
+    }
+}
+
+impl std::error::Error for AppError {}
+impl Display for AppError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
     }
 }

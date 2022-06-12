@@ -38,6 +38,7 @@ pub async fn run(configuration: Settings) {
         configuration.application.host,
         configuration.application.port
     ).parse().unwrap();
+    tracing::info!("server listen: {}", &addr);
     let app = Router::new()
         .route("/", get( usage::usage))
         .route("/todo", 

@@ -28,7 +28,7 @@ Simple TODO list API made in rust
 
 `GET` `/todo`
 
-```
+```not rust
 {
     "code": 0,
     "msg": "OK",
