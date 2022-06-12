@@ -25,6 +25,30 @@ impl AppError {
             AppErrorType::NotFound => 2,
         }
     }
+
+    fn from_err(err: impl ToString, error_type: AppErrorType) -> Self {
+        Self {
+            message: None,
+            cause: Some(err.to_string()),
+            error_type,
+        }
+    }
+
+    fn from_str(msg: &str, error_type: AppErrorType) -> Self {
+        Self {
+            message: Some(msg.to_string()),
+            cause: None,
+            error_type,
+        }
+    }
+
+    pub fn db_error(err: impl ToString) -> Self {
+        Self::from_err(err, AppErrorType::DbError)
+    }
+
+    pub fn not_found() -> Self {
+        Self::from_str("not found", AppErrorType::NotFound)
+    }
 }
 
 impl IntoResponse for AppError {
@@ -38,5 +62,16 @@ impl IntoResponse for AppError {
         };
         let res:Response<()> = Response::err(code, msg);
         Json(res).into_response()
+    }
+}
+
+impl From<deadpool_postgres::PoolError> for AppError {
+    fn from(err: deadpool_postgres::PoolError) -> Self {
+        Self::db_error(err)
+    }
+}
+impl From<tokio_postgres::Error> for AppError {
+    fn from(err: tokio_postgres::Error) -> Self {
+        Self::db_error(err)
     }
 }

@@ -1,7 +1,5 @@
+use crate::{Response, Result};
 use axum::Json;
-
-use crate::Response;
-use crate::Result;
 
 pub async fn usage<'a>() -> Result<Json<Response<Vec<&'a str>>>> {
     let data = r#"
