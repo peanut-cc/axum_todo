@@ -14,11 +14,12 @@ use axum::{Router, routing::get, extract::Extension};
 use configuration::{Settings, DatabaseSettings};
 use deadpool_postgres::Runtime;
 use model::AppState;
-use handler::{ 
+use handler::{
     todo_list,
     usage
 };
 
+use crate::handler::todo_item;
 pub use crate::response::Response;
 
 /// 定义自己的 Result
@@ -41,17 +42,28 @@ pub async fn run(configuration: Settings) {
     tracing::info!("server listen: {}", &addr);
     let app = Router::new()
         .route("/", get( usage::usage))
-        .route("/todo", 
+        .route("/todo",
             get(todo_list::all)
             .post(todo_list::create),
         )
-        .route("/todo/:id",
+        .route("/todo/:list_id",
             get(todo_list::find)
             .put(todo_list::update)
-            .delete(todo_list::delete), 
+            .delete(todo_list::delete),
+        )
+        .route(
+            "/todo/:list_id/items",
+            get(todo_item::all)
+                .post(todo_item::create),
+        )
+        .route(
+            "/todo/:list_id/items/:item_id",
+            get(todo_item::find)
+                .put(todo_item::check)
+                .delete(todo_item::delete),
         )
         .layer(Extension(AppState { pool }));
-    
+
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await

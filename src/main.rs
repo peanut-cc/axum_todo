@@ -9,7 +9,7 @@ async fn main(){
         std::env::set_var("RUST_LOG", "axum_todo=debug");
     }
     tracing_subscriber::fmt::init();
-    
+
     let settings = get_configuration().expect("failed to read configuration");
     axum_todo::run(settings).await
 }

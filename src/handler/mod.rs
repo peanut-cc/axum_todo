@@ -1,10 +1,13 @@
+use axum::Json;
 use deadpool_postgres::Client;
 
-use crate::{error::AppError, model::AppState,Result};
+use crate::{error::AppError, model::AppState,Result, Response};
 
 pub mod todo_list;
 pub mod usage;
+pub mod todo_item;
 
+type HandlerResult<T> = crate::Result<Json<Response<T>>>;
 
 async fn get_client(state: &AppState, handler_name: &str) -> Result<Client> {
     state.pool.get().await.map_err(|err| {
